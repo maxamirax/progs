@@ -1,32 +1,54 @@
-name: Build APK
-on: push
+[app]
 
-jobs:
-  build:
-    runs-on: ubuntu-22.04 # Используем конкретную версию системы
-    steps:
-      - uses: actions/checkout@v4
+# (str) Название твоего приложения
+title = My Tetris Game
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+# (str) Имя пакета (без пробелов)
+package.name = mytetris
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
-          pip3 install --user --upgrade buildozer cython==0.29.33 virtualenv
+# (str) Домен (обычно org.test или твой ник)
+package.domain = org.test
 
-      - name: Build with Buildozer
-        run: |
-          export PATH=$PATH:$HOME/.local/bin
-          # Генерируем конфиг если его нет, или используем твой
-          buildozer android debug
-        continue-on-error: false
+# (str) Где лежит основной код (точка означает текущую папку)
+source.dir = .
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: my-tetris-app
-          path: bin/*.apk
+# (list) Какие файлы включать в APK
+source.include_exts = py,png,jpg,kv,atlas
+
+# (str) Версия приложения
+version = 0.1
+
+# (list) Библиотеки, от которых зависит игра
+# ВАЖНО: Указываем конкретную версию Kivy для стабильности
+requirements = python3,kivy==2.3.0
+
+# (str) Ориентация экрана (портретная для Тетриса)
+orientation = portrait
+
+# (bool) Фулскрин режим
+fullscreen = 1
+
+# (list) Архитектуры процессоров (для современных Android)
+android.archs = arm64-v8a, armeabi-v7a
+
+# (int) Минимальная версия Android (21 — это Android 5.0)
+android.minapi = 21
+
+# (int) Целевая версия Android (33 или 34)
+android.sdk = 33
+
+# (bool) Пропускать ли установку зависимостей (нет)
+android.skip_setup = False
+
+# (bool) Принимать ли лицензии SDK автоматически
+android.accept_sdk_license = True
+
+# (str) Имя точки входа (твой файл должен называться именно main.py)
+python_fallback = python3
+
+[buildozer]
+# (int) Уровень логов (2 — самый подробный, если что-то пойдет не так)
+log_level = 2
+
+# (int) Пауза перед сборкой (на всякий случай)
+warn_on_root = 1
