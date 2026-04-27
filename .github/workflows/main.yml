@@ -3,7 +3,6 @@ on: push
 
 jobs:
   build:
-    # МЕНЯЕМ НА 22.04 — это решит проблему с совместимостью макросов
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -13,21 +12,21 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install System Dependencies
+      - name: Install Dependencies
         run: |
           sudo apt update
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf automake libtool m4 gettext pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev libltdl-dev
           pip3 install --user --upgrade buildozer "cython<3.0" virtualenv
 
-      - name: Build APK with Buildozer
+      - name: Build with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          # Полная очистка перед новой попыткой
+          # Удаляем старое и запускаем чистую сборку
           rm -rf .buildozer
-          yes | buildozer android debug
+          buildozer android debug
         
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: My-Tetris-Game
+          name: Tetris-Package
           path: bin/*.apk
