@@ -3,7 +3,8 @@ on: push
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # МЕНЯЕМ НА 22.04 — это решит проблему с совместимостью макросов
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
@@ -15,14 +16,13 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt update
-          # Добавляем libtool, m4, autoconf и другие важные штуки для компиляции libffi
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf automake libtool m4 gettext pkg-config zlib1g-dev libncurses6 libncursesw6 libtinfo6 cmake libffi-dev libssl-dev
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf automake libtool m4 gettext pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev libltdl-dev
           pip3 install --user --upgrade buildozer "cython<3.0" virtualenv
 
       - name: Build APK with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          # Чистим старые попытки сборки, чтобы не было конфликтов
+          # Полная очистка перед новой попыткой
           rm -rf .buildozer
           yes | buildozer android debug
         
