@@ -15,14 +15,15 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt update
-          # Мы заменили libtinfo5 на libtinfo6 и добавили необходимые системные пакеты
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses6 libncursesw6 libtinfo6 cmake libffi-dev libssl-dev
+          # Добавляем libtool, m4, autoconf и другие важные штуки для компиляции libffi
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf automake libtool m4 gettext pkg-config zlib1g-dev libncurses6 libncursesw6 libtinfo6 cmake libffi-dev libssl-dev
           pip3 install --user --upgrade buildozer "cython<3.0" virtualenv
 
       - name: Build APK with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          # Соглашаемся с лицензиями и запускаем сборку
+          # Чистим старые попытки сборки, чтобы не было конфликтов
+          rm -rf .buildozer
           yes | buildozer android debug
         
       - name: Upload APK
