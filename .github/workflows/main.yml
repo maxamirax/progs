@@ -1,0 +1,26 @@
+name: Build APK
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "::set-output name=date::$(date +'%Y-%m-%d')"
+        shell: bash
+
+      - name: Build with Buildozer
+        uses: ArtemSerebrennikov/buildozer-action@master
+        with:
+          buildozer_version: master
+          python_version: 3.8
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: tetris-apk-${{ steps.get-date.outputs.date }}
+          path: bin/*.apk
